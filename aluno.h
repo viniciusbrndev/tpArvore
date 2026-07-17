@@ -20,6 +20,6 @@ void destroiExpr(No** ppRaiz);
 bool avaliaExpr(No* pRaiz, int *res);
 
 void  imprimeArvore(No* pRaiz);
-bool lerLinha(char *linha);
+bool lerLinha(char *linha,int tam );
 
 #endif

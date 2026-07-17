@@ -62,18 +62,22 @@ void removeParenteses(char *str, int *ini, int *fim){
     if(!str)
         return;
     int nivel = 0;
-    int fecha = -1;
-    while(str[*ini] == '(' && str[*fim] == ')'){
-        for(int i = *ini; i < *ini; i++){
+    int i;
+    while(str[*ini] == '(' && str[*fim] == ')' && *ini < *fim){
+        nivel = 0;
+        for(i = *ini; i <= *fim; i++){
             if(str[i] == '(')
                 nivel++;
             else if(str[i] == ')'){
                 nivel--;
             }
-            if(!nivel)
-                fecha = i;
+            //quer dizer que o parenteses fechou
+            if(nivel == 0){
+                //marca onde o parenteses fechou
+                break;
+            } 
         }
-        if(!nivel && fecha == *fim){
+        if(!nivel && i == *fim){
             (*ini)++;
             (*fim)--;
         }
@@ -116,10 +120,27 @@ int convertStrToNum(char *exp, int ini, int fim){
 bool criarExpr(No **ppRaiz, char *expressao, int ini, int fim){
     if(ppRaiz == NULL || *ppRaiz != NULL || expressao == NULL || ini > fim)
         return false;
+    //testes
+    printf("\nSubexpressao: ");
+    for(int i = ini; i <= fim; i++)
+    putchar(expressao[i]);
+    printf("\n");
 
     removeParenteses(expressao, &ini, &fim);
+    //testes
+    printf("Depois remove: ");
+    for(int i = ini; i <= fim; i++)
+        putchar(expressao[i]);
+    printf("\n");
+
+
 
     int pos = encontrarOperador(expressao, ini, fim);
+
+    printf("Operador = %d", pos);
+    if(pos != -1)
+        printf(" (%c)", expressao[pos]);
+    printf("\n");
 
     if(pos == -1){
 
@@ -167,8 +188,7 @@ void  imprimeArvore(No* pRaiz){
         printf("%d ", pRaiz->dado.num);
     else
         printf("%c ", pRaiz->dado.oper);
-    
-        imprimeArvore(pRaiz->esq);
+    imprimeArvore(pRaiz->esq);
 }
 bool avaliaExpr(No* pRaiz, int *res){
     if(pRaiz){
@@ -176,7 +196,7 @@ bool avaliaExpr(No* pRaiz, int *res){
         if(operador != '\0'){
             int esq, dir;
             if(!avaliaExpr(pRaiz->esq, &esq))//se aconteceu divisão por zero
-                return false
+                return false;
             if(!avaliaExpr(pRaiz->dir, &dir))
                 return false;
 
@@ -201,18 +221,18 @@ bool avaliaExpr(No* pRaiz, int *res){
 void destroiExpr(No** ppRaiz){
     if(!(*ppRaiz))
         return;
-    destroiExprExpr(&(*ppRaiz)->esq);
-    destroiExprExpr(&(*ppRaiz)->dir);
+    destroiExpr(&(*ppRaiz)->esq);
+    destroiExpr(&(*ppRaiz)->dir);
     free(*ppRaiz);
 }
 void limparBuffer(){
     char c;
     while((c = getchar()) != '\n' && c != EOF);
 }
-bool lerLinha(char *linha){
+bool lerLinha(char *linha,int tam ){
     if(!linha)
         return false;
-    fgets(linha, sizeof(linha), stdin);
+    fgets(linha,tam, stdin);
     int n = strlen(linha);
     if(linha[n-1] == '\n')
         linha[n-1] = '\0';
@@ -221,4 +241,8 @@ bool lerLinha(char *linha){
         return false;
     }
     return true;
+}
+void removeEspacos(char *str){
+    int i = 0;
+    while(str)
 }
